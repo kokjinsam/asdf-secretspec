@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+plugin_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+
+# shellcheck source=lib/utils.bash
+source "$plugin_dir/lib/utils.bash"
+
+prefix="${1:-}"
+latest=$(list_all_versions | sort_versions | awk -v prefix="$prefix" 'index($0, prefix) == 1 { latest = $0 } END { print latest }')
+
+[ -n "$latest" ] || fail "No stable version matches '$prefix'."
+printf '%s\n' "$latest"
